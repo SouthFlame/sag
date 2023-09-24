@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<meta property="og:url" content="https://southflame.github.io/sag/">
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Shatter and Gather: Learning Referring Image Segmentation with Text Supervision">
+  <meta name="keywords" content="Nerfies, D-NeRF, NeRF">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shatter and Gather</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="shortcut icon" href="/lab/favicons/favicon.ico">
+  <link rel="apple-touch-icon" sizes="57x57" href="/lab/favicons/apple-touch-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="/lab/favicons/apple-touch-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="/lab/favicons/apple-touch-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="/lab/favicons/apple-touch-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="/lab/favicons/apple-touch-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/lab/favicons/apple-touch-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/lab/favicons/apple-touch-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/lab/favicons/apple-touch-icon-152x152.png">
+  <link rel="icon" type="image/png" href="/lab/favicons/favicon-196x196.png" sizes="196x196">
+  <link rel="icon" type="image/png" href="/lab/favicons/favicon-160x160.png" sizes="160x160">
+  <link rel="icon" type="image/png" href="/lab/favicons/favicon-96x96.png" sizes="96x96">
+  <link rel="icon" type="image/png" href="/lab/favicons/favicon-16x16.png" sizes="16x16">
+  <link rel="icon" type="image/png" href="/lab/favicons/favicon-32x32.png" sizes="32x32">
+  <!-- <link rel="icon" href="./static/images/favicon.svg"> -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  </script>
+  <script type="text/javascript"
+    src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+</head>
+<body>
+
+<!-- <nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://keunhong.com">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a> -->
+
+      <!-- <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://hypernerf.github.io">
+            HyperNeRF
+          </a>
+          <a class="navbar-item" href="https://nerfies.github.io">
+            Nerfies
+          </a>
+          <a class="navbar-item" href="https://latentfusion.github.io">
+            LatentFusion
+          </a>
+          <a class="navbar-item" href="https://photoshape.github.io">
+            PhotoShape
+          </a>
+        </div>
+      </div>
+    </div> -->
+
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-3 publication-title">Shatter and Gather:<br> 
+            Learning Referring Image Segmentation with Text Supervision</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://kdwonn.github.io/">Dongwon Kim</a><sup>1*</sup>,&ensp;</span>
+            <span class="author-block">
+              <a href="https://southflame.github.io/">Namyup Kim</a><sup>1*</sup>,&ensp;</span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=XZugqiwAAAAJ&hl=en">Cuiling Lan</a><sup>2</sup>,&ensp;</span>
+            <span class="author-block">
+              <a href="https://suhakwak.github.io/">Suha Kwak</a><sup>1</sup>,&ensp;</span>
+            
+          </div>
+
+          <div class="is-size-10 publication-authors">
+            <span class="author-block"><sup>1</sup>POSETCH, </span>
+            <span class="author-block"><sup>2</sup>Microsoft Research Asia</span>
+          </div>
+          <div class="is-size-10 publication-authors">
+            <span class="author-block">* Equal contribution</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2308.15512"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <!-- <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/google/nerfies"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+              <!-- <span class="link-block">
+                <a href="https://github.com/google/nerfies/releases/tag/0.1"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Data</span>
+                  </a> -->
+              <span class="link-block">
+                <a href="https://cvlab.postech.ac.kr/research/sag/#bibtex" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-obp"></i>
+                  </span>
+                  <span>BibTex</span>
+                </a>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="./static/images/teaser.jpg"
+                 class="interpolation-image"
+                 alt="Interpolate start reference image."/>
+      <h2 class="subtitle has-text-centered">
+        <!-- Shatter and Gather -->
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="hero">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Referring image segmentation, the task of segmenting any arbitrary entities described
+            in free-form texts, opens up a variety of vision applications.
+            However, manual labeling of training data for this task is prohibitively costly,
+            leading to lack of labeled data for training.
+            We address this issue by a weakly supervised learning approach using text descriptions
+            of training images as the only
+            source of supervision.
+          </p>
+          <p>
+            To this end, we first present a new model that discovers semantic entities in input image
+            and then combines such entities relevant to text query to predict the mask of the referent.
+            We also present a new loss function that allows the model to be trained without any further supervision.
+            Our method was evaluated on four public benchmarks for referring image segmentation, where it clearly
+            outperformed the existing method for the same task and recent open-vocabulary segmentation models on all the benchmarks.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <!-- Overall Architecture. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Overall Architecture of SaG</h2>
+
+        <!-- Interpolating. -->
+        <!-- <h3 class="title is-4">Interpolating states</h3> -->
+        <div class="columns is-vcentered interpolation-panel">
+          <div class="column is-14 has-text-centered">
+            <img src="./static/images/overall.png"/>
+          </div>
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            Illustration of the overall architecture of our model along with its behavior during training and inference. <br>
+            (a) Feature extractors: The visual and textual features are extracted by transformer-based encoders of the two
+            modalities respectively.
+            (b) Entity discovery module: A set of visual entities are discovered from the visual features through the bottom-up attention.
+            (c) Modality fusion module: The visual entities and a referring expression are fused considering their relevance,
+            which is estimated by the top-down attention.
+            Our model is trained with the proposed contrastive cycle-consistency (C$^3$) loss between the cross-modal embeddings and textual features.
+            In inference, the segmentation mask is predicted by jointly considering the visual entities $A^{\text{slot}}$ from the entity discovery module
+            and the relevance scores $A^{\text{fuse}}$ from the modality fusion module.
+          </p>
+        </div>
+        <!-- <br/> -->
+        <!--/ Interpolating. -->
+
+      </div>
+    </div>
+    
+    <!--/ Experimental Results. -->
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Experimental Results</h2>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-4">Comparison with previous and related methods</h3>
+        <img src="./static/images/table1.png"
+                 class="interpolation-image"
+                 alt="Interpolate start reference image."/>
+        <p>
+        Comparison with weakly-supervised method (TSEG) and open-vocabulary segmentation method (GroupViT and MaskCLIP). 
+        The results on four datasets are reported in mIoU ($\%$). Fine-tuning \cmark means that the model is trained with the image-text pairs of the target 
+        benchmark; otherwise, it just relies on the pre-trained weight without further training.
+        </p>
+      </div>
+    </div>
+
+      
+
+    <div class="columns is-centered">
+      <!-- Visual Effects. -->
+      <div class="column is-4">
+        <div class="content">
+          <h2 class="title is-4">Ablation Study</h2>
+          <img src="./static/images/table2.png"
+                 class="interpolation-image"
+                 alt="Interpolate start reference image."/>
+          <p>
+            Ablation studies of model components and loss function on RefCOCO <i>val</i> set. 
+          </p>
+        </div>
+      </div>
+      <!--/ Visual Effects. -->
+
+      <!-- Matting. -->
+      <div class="column">
+        <h2 class="title is-4">In-depth Analysis</h2>
+        <div class="columns is-centered">
+          <div class="column content">
+            <img src="./static/images/table3.png"
+                 class="interpolation-image"
+                 alt="Interpolate start reference image."/>
+            <p>
+              Impact of hyperparameters $K_g$ and $K_s$ (<i>Left</i>) and inference schemes (<i>Right</i>) on RefCOCO <i>val</i> set.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div> 
+
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-4">Qualitative Results</h3>
+        <p>
+        <b>Visualization of visual entities discovered using each slot type</b>
+        </p>
+        <img src="./static/images/qual1.png"
+                 class="interpolation-image"
+                 alt="Interpolate start reference image."/>
+        <p>
+          Qualitative results of our framework with entity slot (Ours), random slot, and query slot on RefCOCO <i>val</i> set. 
+          In the case of entity slots, the boundary color indicates the Gaussian distribution that each slot is sampled from.
+          For each slot type, we present 10 discovered entities from $A^\text{slot}$ and the final predictions. <br><br>
+        </p>
+        <p>
+          <b>Qualitative results of our framework</b>
+          </p>
+          <img src="./static/images/qual2.png"
+                   class="interpolation-image"
+                   alt="Interpolate start reference image."/>
+          <p>
+            We present the discovered entities from $A^\text{slot}$ and their relevance scores from $A^\text{slot}$. 
+            Top-3 entities in terms of relevance to query expression are presented.
+          </p>
+      </div>
+    </div>
+    
+    <!--/ Matting. -->
+
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title"><a id="bibtex">BibTeX</a></h2>
+    <pre><code>@inproceedings{kim2023shatter,
+      title={Shatter and Gather: Learning Referring Image Segmentation with Text Supervision},
+      author={Kim, Dongwon and Kim, Namyup and Lan, Cuiling and Kwak, Suha},
+      journal={Proceedings of the IEEE/CVF International Conference on Computer Vision},
+      year={2023},
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="columns is-centered">
+    <div class="column is-8">
+      <div class="content">
+        <p>
+          This website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+          Commons Attribution-ShareAlike 4.0 International License</a>.
+        </p>
+        <p>
+          Website adapted from the following <a href="https://github.com/nerfies/nerfies.github.io">source code</a>.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
